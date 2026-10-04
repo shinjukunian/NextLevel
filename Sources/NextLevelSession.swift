@@ -901,9 +901,10 @@ extension NextLevelSession {
                     exportSession.shouldOptimizeForNetworkUse = self.shouldOptimizeForNetworkUse
                     exportSession.outputURL = exportURL
                     exportSession.outputFileType = self.fileType
-                    exportSession.exportAsynchronously {
+                    exportSession.exportAsynchronously { [exportSession] in
+                        let error = exportSession.error          // read before hopping queues
                         DispatchQueue.main.async {
-                            completionHandler(exportURL, exportSession.error)
+                            completionHandler(exportURL, error)  // only Sendable values cross over
                         }
                     }
                     return
